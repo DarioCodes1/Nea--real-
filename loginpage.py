@@ -26,5 +26,6 @@ def new_user(username, password):
     cursor.execute('INSERT INTO users(username, password) VALUES (?,?)',(username, password))
     conn.commit()
     conn.close()
+    print("hello")
 
 window.mainloop()
