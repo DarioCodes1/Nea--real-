@@ -12,7 +12,7 @@ login_label = tkinter.Label(window, text="Login", background='#467D6F')
 username_label = tkinter.Label(window, text="Username", background='#467D6F')
 username_entry = tkinter.Entry(window)
 password_label = tkinter.Label(window, text="Password", background='#467D6F')
-password_entry = tkinter.Entry(window)
+password_entry = tkinter.Entry(window, show="*")
 button = tkinter.Button(window, text="Login")
 
 #Placing the widgets on the page
