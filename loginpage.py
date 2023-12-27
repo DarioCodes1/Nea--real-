@@ -8,12 +8,12 @@ window.geometry('750x500') #Give the dimensions of the desired window
 window.configure(bg='#467D6F') #Give the background a colour
 
 #Creating widgets
-login_label = tkinter.Label(window, text="Login", bg='#467D6F', fg="#FFFFFF")
-username_label = tkinter.Label(window, text="Username", bg='#467D6F', fg="#FFFFFF")
-username_entry = tkinter.Entry(window)
-password_label = tkinter.Label(window, text="Password", bg='#467D6F', fg="#FFFFFF")
-password_entry = tkinter.Entry(window, show="*")
-button = tkinter.Button(window, text="Login", bg="#AABF11", fg="#FFFFFF")
+login_label = tkinter.Label(window, text="Login", bg='#467D6F', fg="#FFFFFF", font=("Times New Roman", 25))
+username_label = tkinter.Label(window, text="Username", bg='#467D6F', fg="#FFFFFF", font=("Times New Roman", 12))
+username_entry = tkinter.Entry(window, font=("Times New Roman", 12))
+password_label = tkinter.Label(window, text="Password", bg='#467D6F', fg="#FFFFFF", font=("Times New Roman", 12))
+password_entry = tkinter.Entry(window, show="*", font=("Times New Roman", 12))
+button = tkinter.Button(window, text="Login", bg="#AABF11", fg="#FFFFFF", font=("Times New Roman", 10))
 
 #Placing the widgets on the page
 login_label.grid(row=0, column=0, columnspan=2)
