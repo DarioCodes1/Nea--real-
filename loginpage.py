@@ -5,15 +5,15 @@ import sqlite3
 window = tkinter.Tk() #Initialise the window
 window.title('Login Page') #Title the Window
 window.geometry('750x500') #Give the dimensions of the desired window
-window.configure(background='#467D6F') #Give the background a colour
+window.configure(bg='#467D6F') #Give the background a colour
 
 #Creating widgets
-login_label = tkinter.Label(window, text="Login", background='#467D6F')
-username_label = tkinter.Label(window, text="Username", background='#467D6F')
+login_label = tkinter.Label(window, text="Login", bg='#467D6F', fg="#FFFFFF")
+username_label = tkinter.Label(window, text="Username", bg='#467D6F', fg="#FFFFFF")
 username_entry = tkinter.Entry(window)
-password_label = tkinter.Label(window, text="Password", background='#467D6F')
+password_label = tkinter.Label(window, text="Password", bg='#467D6F', fg="#FFFFFF")
 password_entry = tkinter.Entry(window, show="*")
-button = tkinter.Button(window, text="Login")
+button = tkinter.Button(window, text="Login", bg="#AABF11", fg="#FFFFFF")
 
 #Placing the widgets on the page
 login_label.grid(row=0, column=0, columnspan=2)
@@ -22,7 +22,6 @@ username_entry.grid(row=1, column=1)
 password_label.grid(row=2, column=0)
 password_entry.grid(row=2, column=1)
 button.grid(row=3, column=0, columnspan =2)
-
 
 
 def createdatabase():
