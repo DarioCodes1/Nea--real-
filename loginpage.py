@@ -10,11 +10,22 @@ window.configure(bg='#467D6F') #Give the background a colour
 frame = tkinter.Frame(bg="#467D6F")
 
 def new_user(username, password):
-    conn = sqlite3.connect("Login details.db")
-    cursor = conn.cursor()
-    cursor.execute('INSERT INTO users(username, password) VALUES (?,?)',(username, password)) #Add a new username and password for a new user
-    conn.commit() #Save changes to database
-    conn.close() #Close database
+    total_upper = 0
+    for i in password:
+        if i.isupper() == True:
+            total_upper = total_upper + 1
+    if total_upper == 0:
+        messagebox.showerror("Invalid password", "Password must contain at least 1 upper case letter")
+    elif len(password)< 8:
+        messagebox.showerror("Invalid password", "Password must be at least 8 characters or longer")
+    elif len(username)< 5:
+        messagebox.showerror("Invalid password", "Username must be at least 5 characters or longer")
+    else:
+        conn = sqlite3.connect("Login details.db")
+        cursor = conn.cursor()
+        cursor.execute('INSERT INTO users(username, password) VALUES (?,?)',(username, password)) #Add a new username and password for a new user
+        conn.commit() #Save changes to database
+        conn.close() #Close database
 
 def create_login_page():
     create_login_page = tkinter.Tk()
