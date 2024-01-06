@@ -9,6 +9,12 @@ window.configure(bg='#467D6F') #Give the background a colour
 
 frame = tkinter.Frame(bg="#467D6F")
 
+def new_user(username, password):
+    conn = sqlite3.connect("Login details.db")
+    cursor = conn.cursor()
+    cursor.execute('INSERT INTO users(username, password) VALUES (?,?)',(username, password)) #Add a new username and password for a new user
+    conn.commit() #Save changes to database
+    conn.close() #Close database
 
 def create_login_page():
     create_login_page = tkinter.Tk()
@@ -25,7 +31,7 @@ def create_login_page():
     create_username_entry = tkinter.Entry(create_login_frame, font=("Times New Roman", 12))
     create_password_label = tkinter.Label(create_login_frame, text="Password", bg='#467D6F', fg="#FFFFFF", font=("Times New Roman", 12), pady=5)
     create_password_entry = tkinter.Entry(create_login_frame, show="*", font=("Times New Roman", 12))
-    create_login_button = tkinter.Button(create_login_frame, text="Create Account", bg="#AABF11", fg="#FFFFFF", font=("Times New Roman", 10), pady=5, command=new_user)
+    create_login_button = tkinter.Button(create_login_frame, text="Create Account", bg="#AABF11", fg="#FFFFFF", font=("Times New Roman", 10), pady=5, command=lambda: new_user(create_username_entry.get(), create_password_entry.get()))
 
     #Placing the wqidgets to create an account
     create_login_label.grid(row=0, column=5, columnspan=2)
@@ -64,15 +70,6 @@ def on_login_button_click():
 
 def on_open_create_login_click():
     create_login_page()
-
-def new_user():
-    username = create_username_entry.get()
-    password = create_password_entry.get()
-    conn = sqlite3.connect("Login details.db")
-    cursor = conn.cursor()
-    cursor.execute('INSERT INTO users(username, password) VALUES (?,?)',(username, password)) #Add a new username and password for a new user
-    conn.commit() #Save changes to database
-    conn.close() #Close database
 
 #Creating widgets for the login
 login_label = tkinter.Label(frame, text="Login", bg='#467D6F', fg="#AABF11", font=("Times New Roman", 25), pady=25)
