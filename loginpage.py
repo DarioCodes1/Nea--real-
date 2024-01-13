@@ -11,21 +11,58 @@ frame = tkinter.Frame(bg="#467D6F")
 
 def new_user(username, password):
     total_upper = 0
+    conn = sqlite3.connect('Login details.db')
+    cursor = conn.cursor()
     for i in password:
         if i.isupper() == True:
             total_upper = total_upper + 1
-    if total_upper == 0:
+        else:
+            pass
+    total_upper = sum(1 for i in password if i.isupper())
+    conn = sqlite3.connect('Login Details.db')
+    cursor = conn.cursor()
+    # Check if the username already exists
+    cursor.execute('SELECT username, password FROM users WHERE username=?', (username,))
+    existing_username = cursor.fetchone()
+    if existing_username:
+        messagebox.showerror("Username already exists", "The entered username already exists. Please choose a different username.")
+    elif total_upper == 0:
         messagebox.showerror("Invalid password", "Password must contain at least 1 upper case letter")
-    elif len(password)< 8:
+    elif len(password) < 8:
         messagebox.showerror("Invalid password", "Password must be at least 8 characters or longer")
-    elif len(username)< 5:
-        messagebox.showerror("Invalid password", "Username must be at least 5 characters or longer")
+    elif len(username) < 5:
+        messagebox.showerror("Invalid username", "Username must be at least 5 characters or longer")
     else:
         conn = sqlite3.connect("Login details.db")
         cursor = conn.cursor()
         cursor.execute('INSERT INTO users(username, password) VALUES (?,?)',(username, password)) #Add a new username and password for a new user
         conn.commit() #Save changes to database
         conn.close() #Close database
+
+def now_logged_in():
+    now_logged_in = tkinter.Tk() #Initialising window
+    now_logged_in.title("Logged in")
+    now_logged_in.geometry('750x500')
+    now_logged_in.configure(bg="#467D6F")
+    
+    #Creating a frame
+    now_logged_in_frame = tkinter.Frame(now_logged_in, bg="#467D6F")
+
+    #Adding data (widgets) now that you are logged in
+    logged_in_title = tkinter.Label(now_logged_in_frame, text="THE MACHINE ", bg='#467D6F', fg="#AABF11", font=("Times New Roman", 25), pady=25)
+    logged_in_pigeon = tkinter.Label(now_logged_in_frame, text="Pigeon Count: ", bg='#467D6F', fg="#AABF11", font=("Times New Roman", 12), pady=25)
+    logged_in_fox = tkinter.Label(now_logged_in_frame, text="Fox Count: ", bg='#467D6F', fg="#AABF11", font=("Times New Roman", 12), pady=25)
+    logged_in_human = tkinter.Label(now_logged_in_frame, text="Human Count: ", bg='#467D6F', fg="#AABF11", font=("Times New Roman", 12), pady=25)
+    
+    #Place widgets onto the frame
+    logged_in_title.grid(row=0, column=0, columnspan=2)
+    logged_in_pigeon.grid(row=1, column=0, columnspan=2)
+    logged_in_fox.grid(row=2, column=0, columnspan=2)
+    logged_in_human.grid(row=3, column=0, columnspan=2)
+
+    now_logged_in_frame.pack()
+
+    now_logged_in.mainloop()
 
 def create_login_page():
     create_login_page = tkinter.Tk()
@@ -66,6 +103,7 @@ def login(): #function for logging in
     user_credentials = cursor.fetchone()
     if user_credentials and entered_password == user_credentials[1]:
         print("Successful login")
+        now_logged_in()
     else:
         print("Invalid username or password")
 
