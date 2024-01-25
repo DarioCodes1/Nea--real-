@@ -1,6 +1,7 @@
 import tkinter
 from tkinter import messagebox
 import sqlite3 
+import random
 
 window = tkinter.Tk() #Initialise the window
 window.title('Login Page') #Title the Window
@@ -8,6 +9,57 @@ window.geometry('750x500') #Give the dimensions of the desired window
 window.configure(bg='#467D6F') #Give the background a colour
 
 frame = tkinter.Frame(bg="#467D6F")
+
+def change_password(username, old_password, new_password):
+    conn = sqlite3.connect('Login details.db')
+    cursor = conn.cursor()
+
+    # Check if the username and old password match
+    cursor.execute('SELECT username, password FROM users WHERE username=? AND password=?', (username, old_password))
+    user_credentials = cursor.fetchone()
+
+    if user_credentials:
+        # Update the password
+        cursor.execute('UPDATE users SET password=? WHERE username=?', (new_password, username))
+        conn.commit()
+        conn.close()
+        messagebox.showinfo("Password Changed", "Password has been changed successfully!")
+    else:
+        conn.close()
+        messagebox.showerror("Change Password Failed", "Invalid username or old password.")
+
+def change_password_page():
+    change_password_window = tkinter.Tk()
+    change_password_window.title("Change Password")
+    change_password_window.geometry('400x300')
+    change_password_window.configure(bg="#467D6F")
+
+    change_password_frame = tkinter.Frame(change_password_window, bg="#467D6F")
+
+    # Creating widgets for changing password
+    username_label = tkinter.Label(change_password_frame, text="Username", bg='#467D6F', fg="#FFFFFF", font=("Times New Roman", 12), pady=5)
+    username_entry = tkinter.Entry(change_password_frame, font=("Times New Roman", 12))
+    old_password_label = tkinter.Label(change_password_frame, text="Old Password", bg='#467D6F', fg="#FFFFFF", font=("Times New Roman", 12), pady=5)
+    old_password_entry = tkinter.Entry(change_password_frame, show="*", font=("Times New Roman", 12))
+    new_password_label = tkinter.Label(change_password_frame, text="New Password", bg='#467D6F', fg="#FFFFFF", font=("Times New Roman", 12), pady=5)
+    new_password_entry = tkinter.Entry(change_password_frame, show="*", font=("Times New Roman", 12))
+    change_password_button = tkinter.Button(change_password_frame, text="Change Password", bg="#AABF11", fg="#FFFFFF", font=("Times New Roman", 10), pady=5, command=lambda: change_password(username_entry.get(), old_password_entry.get(), new_password_entry.get()))
+
+    # Placing the widgets
+    username_label.grid(row=0, column=0)
+    username_entry.grid(row=0, column=1)
+    old_password_label.grid(row=1, column=0)
+    old_password_entry.grid(row=1, column=1)
+    new_password_label.grid(row=2, column=0)
+    new_password_entry.grid(row=2, column=1)
+    change_password_button.grid(row=3, column=0, columnspan=2)
+
+    # Packing the frame onto the screen
+    change_password_frame.pack()
+    change_password_window.mainloop()
+
+def on_change_password_click():
+    change_password_page()
 
 def new_user(username, password):
     total_upper = 0
@@ -67,7 +119,7 @@ def now_logged_in():
 def create_login_page():
     create_login_page = tkinter.Tk()
     create_login_page.title("Create Login")
-    create_login_page.geometry('750x500')
+    create_login_page.geometry('400x300')
     create_login_page.configure(bg="#467D6F")
     
     #Create a frame for the widgets
@@ -105,16 +157,9 @@ def login(): #function for logging in
         print("Successful login")
         now_logged_in()
     else:
-        print("Invalid username or password")
-
-def check_username_and_password():
-    if len(str(username_entry))<8:
-        print("Username must be at least 8 characters")
-    if len(str(password_entry))<8:
-        print("password must be at least 8 characters")
+        messagebox.showerror("Invalid username or password", "Try again")
 
 def on_login_button_click():
-    check_username_and_password()
     login()
 
 def on_open_create_login_click():
@@ -126,10 +171,10 @@ username_label = tkinter.Label(frame, text="Username", bg='#467D6F', fg="#FFFFFF
 username_entry = tkinter.Entry(frame, font=("Times New Roman", 12))
 password_label = tkinter.Label(frame, text="Password", bg='#467D6F', fg="#FFFFFF", font=("Times New Roman", 12), pady=5)
 password_entry = tkinter.Entry(frame, show="*", font=("Times New Roman", 12))
-login_button = tkinter.Button(frame, text="Login", bg="#AABF11", fg="#FFFFFF", font=("Times New Roman", 10), pady=5, command=on_login_button_click)
-
 no_account_label = tkinter.Label(frame, text="Not got an account? Create one!", bg='#467D6F', fg="#FFFFFF", font=("Times New Roman", 12) ,pady=5)
+login_button = tkinter.Button(frame, text="Login", bg="#AABF11", fg="#FFFFFF", font=("Times New Roman", 10), pady=5, command=on_login_button_click)
 create_login_button = tkinter.Button(frame, text="Create Account", bg="#AABF11", fg="#FFFFFF", font=("Times New Roman", 10), pady=5, command=on_open_create_login_click)
+change_password_button = tkinter.Button(frame, text="Change Password", bg="#AABF11", fg="#FFFFFF", font=("Times New Roman", 10), pady=5, command=on_change_password_click)
 
 #Placing the widgets on the fisrt page
 login_label.grid(row=0, column=0, columnspan=2)
@@ -138,6 +183,7 @@ username_entry.grid(row=1, column=1)
 password_label.grid(row=2, column=0)
 password_entry.grid(row=2, column=1)
 login_button.grid(row=3, column=0, columnspan =2)
+change_password_button.grid(row=3, column=2, columnspan=2)
 
 no_account_label.grid(row=2, column=4)
 create_login_button.grid(row=3, column=4, columnspan =2)
