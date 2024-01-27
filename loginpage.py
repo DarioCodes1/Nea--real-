@@ -11,22 +11,37 @@ window.configure(bg='#467D6F') #Give the background a colour
 frame = tkinter.Frame(bg="#467D6F")
 
 def change_password(username, old_password, new_password):
+    total_upper = 0
     conn = sqlite3.connect('Login details.db')
     cursor = conn.cursor()
+    for i in new_password:
+        if i.isupper() == True:
+            total_upper = total_upper + 1
+        else:
+            pass
+    total_upper = sum(1 for i in new_password if i.isupper())
 
     # Check if the username and old password match
     cursor.execute('SELECT username, password FROM users WHERE username=? AND password=?', (username, old_password))
     user_credentials = cursor.fetchone()
 
-    if user_credentials:
-        # Update the password
-        cursor.execute('UPDATE users SET password=? WHERE username=?', (new_password, username))
-        conn.commit()
-        conn.close()
-        messagebox.showinfo("Password Changed", "Password has been changed successfully!")
+    sure = messagebox.askquestion("Ask Question","Are you sure you would like to delete your account? There is no going back", icon="info")
+    if sure == "yes":
+        if user_credentials:
+            if total_upper == 0: # Checking if there is at least 1 capital letter or not
+             messagebox.showerror("Invalid password", "Password must contain at least 1 upper case letter", icon="error")
+            elif len(new_password) < 8: # Checking if there are at least 8 characters or not
+                messagebox.showerror("Invalid password", "Password must be at least 8 characters or longer", icon="error")
+            else:
+                cursor.execute('UPDATE users SET password=? WHERE username=?', (new_password, username))
+                conn.commit()
+                conn.close()
+                messagebox.showinfo("Password Changed", "Password has been changed successfully!", icon="info")
+        else:
+            conn.close()
+            messagebox.showerror("Change Password Failed", "Invalid username or old password.", icon="error")
     else:
-        conn.close()
-        messagebox.showerror("Change Password Failed", "Invalid username or old password.")
+        pass
 
 def change_password_page():
     change_password_window = tkinter.Tk()
@@ -34,6 +49,7 @@ def change_password_page():
     change_password_window.geometry('400x300')
     change_password_window.configure(bg="#467D6F")
 
+    #Creating a frame
     change_password_frame = tkinter.Frame(change_password_window, bg="#467D6F")
 
     # Creating widgets for changing password
@@ -73,17 +89,18 @@ def new_user(username, password):
     total_upper = sum(1 for i in password if i.isupper())
     conn = sqlite3.connect('Login details.db')
     cursor = conn.cursor()
+
     # Check if the username already exists
     cursor.execute('SELECT username, password FROM users WHERE username=?', (username,))
     existing_username = cursor.fetchone()
     if existing_username:
-        messagebox.showerror("Username already exists", "The entered username already exists. Please choose a different username.")
+        messagebox.showerror("Username already exists", "The entered username already exists. Please choose a different username.", icon="error")
     elif total_upper == 0:
-        messagebox.showerror("Invalid password", "Password must contain at least 1 upper case letter")
+        messagebox.showerror("Invalid password", "Password must contain at least 1 upper case letter", icon="error")
     elif len(password) < 8:
-        messagebox.showerror("Invalid password", "Password must be at least 8 characters or longer")
+        messagebox.showerror("Invalid password", "Password must be at least 8 characters or longer", icon="error")
     elif len(username) < 5:
-        messagebox.showerror("Invalid username", "Username must be at least 5 characters or longer")
+        messagebox.showerror("Invalid username", "Username must be at least 5 characters or longer", icon="error")
     else:
         conn = sqlite3.connect("Login details.db")
         cursor = conn.cursor()
