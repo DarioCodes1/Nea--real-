@@ -2,13 +2,15 @@ import tkinter
 from tkinter import messagebox
 import sqlite3 
 import random
+from captcha.image import ImageCaptcha
+from PIL import Image
 
 window = tkinter.Tk() #Initialise the window
 window.title('Login Page') #Title the Window
 window.geometry('750x500') #Give the dimensions of the desired window
-window.configure(bg='#467D6F') #Give the background a colour
+window.configure(bg='#161d29') #Give the background a colour
 
-frame = tkinter.Frame(bg="#467D6F")
+frame = tkinter.Frame(bg="#161d29")
 
 def change_password(username, old_password, new_password):
     total_upper = 0
@@ -47,19 +49,19 @@ def change_password_page():
     change_password_window = tkinter.Tk()
     change_password_window.title("Change Password")
     change_password_window.geometry('400x300')
-    change_password_window.configure(bg="#467D6F")
+    change_password_window.configure(bg="#161d29")
 
     #Creating a frame
-    change_password_frame = tkinter.Frame(change_password_window, bg="#467D6F")
+    change_password_frame = tkinter.Frame(change_password_window, bg="#161d29")
 
     # Creating widgets for changing password
-    username_label = tkinter.Label(change_password_frame, text="Username", bg='#467D6F', fg="#FFFFFF", font=("Times New Roman", 12), pady=5)
+    username_label = tkinter.Label(change_password_frame, text="Username", bg='#161d29', fg="#FFFFFF", font=("Times New Roman", 12), pady=5)
     username_entry = tkinter.Entry(change_password_frame, font=("Times New Roman", 12))
-    old_password_label = tkinter.Label(change_password_frame, text="Old Password", bg='#467D6F', fg="#FFFFFF", font=("Times New Roman", 12), pady=5)
+    old_password_label = tkinter.Label(change_password_frame, text="Old Password", bg='#161d29', fg="#FFFFFF", font=("Times New Roman", 12), pady=5)
     old_password_entry = tkinter.Entry(change_password_frame, show="*", font=("Times New Roman", 12))
-    new_password_label = tkinter.Label(change_password_frame, text="New Password", bg='#467D6F', fg="#FFFFFF", font=("Times New Roman", 12), pady=5)
+    new_password_label = tkinter.Label(change_password_frame, text="New Password", bg='#161d29', fg="#FFFFFF", font=("Times New Roman", 12), pady=5)
     new_password_entry = tkinter.Entry(change_password_frame, show="*", font=("Times New Roman", 12))
-    change_password_button = tkinter.Button(change_password_frame, text="Change Password", bg="#AABF11", fg="#FFFFFF", font=("Times New Roman", 10), pady=5, command=lambda: change_password(username_entry.get(), old_password_entry.get(), new_password_entry.get()))
+    change_password_button = tkinter.Button(change_password_frame, text="Change Password", bg="#444A53", fg="#FFFFFF", font=("Times New Roman", 10), pady=5, command=lambda: change_password(username_entry.get(), old_password_entry.get(), new_password_entry.get()))
 
     # Placing the widgets
     username_label.grid(row=0, column=0)
@@ -113,17 +115,17 @@ def now_logged_in():
     now_logged_in = tkinter.Tk() #Initialising window
     now_logged_in.title("Logged in")
     now_logged_in.geometry('750x500')
-    now_logged_in.configure(bg="#467D6F")
+    now_logged_in.configure(bg="#161d29")
     
     #Creating a frame
-    now_logged_in_frame = tkinter.Frame(now_logged_in, bg="#467D6F")
+    now_logged_in_frame = tkinter.Frame(now_logged_in, bg="#161d29")
 
     #Adding data (widgets) now that you are logged in
-    logged_in_title = tkinter.Label(now_logged_in_frame, text="THE MACHINE ", bg='#467D6F', fg="#AABF11", font=("Times New Roman", 25), pady=25)
-    logged_in_pigeon = tkinter.Label(now_logged_in_frame, text="Pigeon Count: ", bg='#467D6F', fg="#AABF11", font=("Times New Roman", 12), pady=25)
-    logged_in_fox = tkinter.Label(now_logged_in_frame, text="Fox Count: ", bg='#467D6F', fg="#AABF11", font=("Times New Roman", 12), pady=25)
-    logged_in_human = tkinter.Label(now_logged_in_frame, text="Human Count: ", bg='#467D6F', fg="#AABF11", font=("Times New Roman", 12), pady=25)
-    logged_in_delete_account = tkinter.Button(now_logged_in_frame, text="Delete Account", bg="#AABF11", fg="#FFFFFF", font=("Times New Roman", 12), pady=25, command=lambda: delete_account(entered_username, entered_password))
+    logged_in_title = tkinter.Label(now_logged_in_frame, text="THE MACHINE ", bg='#161d29', fg="#444A53", font=("Times New Roman", 25), pady=25)
+    logged_in_pigeon = tkinter.Label(now_logged_in_frame, text="Pigeon Count: ", bg='#161d29', fg="#444A53", font=("Times New Roman", 12), pady=25)
+    logged_in_fox = tkinter.Label(now_logged_in_frame, text="Fox Count: ", bg='#161d29', fg="#444A53", font=("Times New Roman", 12), pady=25)
+    logged_in_human = tkinter.Label(now_logged_in_frame, text="Human Count: ", bg='#161d29', fg="#444A53", font=("Times New Roman", 12), pady=25)
+    logged_in_delete_account = tkinter.Button(now_logged_in_frame, text="Delete Account", bg="#444A53", fg="#FFFFFF", font=("Times New Roman", 12), pady=25, command=lambda: delete_account(entered_username, entered_password))
 
     #Place widgets onto the frame
     logged_in_title.grid(row=0, column=0, columnspan=2)
@@ -153,18 +155,18 @@ def create_login_page():
     create_login_page = tkinter.Tk()
     create_login_page.title("Create Login")
     create_login_page.geometry('400x300')
-    create_login_page.configure(bg="#467D6F")
+    create_login_page.configure(bg="#161d29")
     
     #Create a frame for the widgets
-    create_login_frame = tkinter.Frame(create_login_page, bg="#467D6F")
+    create_login_frame = tkinter.Frame(create_login_page, bg="#161d29")
 
     #Creating widgets to create an account
-    create_login_label = tkinter.Label(create_login_frame, text="Create Login", bg='#467D6F', fg="#AABF11", font=("Times New Roman", 25), pady=25)
-    create_username_label = tkinter.Label(create_login_frame, text="Username", bg='#467D6F', fg="#FFFFFF", font=("Times New Roman", 12) ,pady=5)
+    create_login_label = tkinter.Label(create_login_frame, text="Create Login", bg='#161d29', fg="#444A53", font=("Times New Roman", 25), pady=25)
+    create_username_label = tkinter.Label(create_login_frame, text="Username", bg='#161d29', fg="#FFFFFF", font=("Times New Roman", 12) ,pady=5)
     create_username_entry = tkinter.Entry(create_login_frame, font=("Times New Roman", 12))
-    create_password_label = tkinter.Label(create_login_frame, text="Password", bg='#467D6F', fg="#FFFFFF", font=("Times New Roman", 12), pady=5)
+    create_password_label = tkinter.Label(create_login_frame, text="Password", bg='#161d29', fg="#FFFFFF", font=("Times New Roman", 12), pady=5)
     create_password_entry = tkinter.Entry(create_login_frame, show="*", font=("Times New Roman", 12))
-    create_login_button = tkinter.Button(create_login_frame, text="Create Account", bg="#AABF11", fg="#FFFFFF", font=("Times New Roman", 10), pady=5, command=lambda: new_user(create_username_entry.get(), create_password_entry.get()))
+    create_login_button = tkinter.Button(create_login_frame, text="Create Account", bg="#444A53", fg="#FFFFFF", font=("Times New Roman", 10), pady=5, command=lambda: new_user(create_username_entry.get(), create_password_entry.get()))
 
     #Placing the wqidgets to create an account
     create_login_label.grid(row=0, column=5, columnspan=2)
@@ -179,20 +181,62 @@ def create_login_page():
     
     create_login_page.mainloop()
     
+def generate_captcha():
+    word_list = [
+    "Tiger",
+    "Sunshine",
+    "Butterfly",
+    "Adventure",
+    "Serenity",
+    "Harmony",
+    "Chocolate",
+    "Mystery",
+    "Rainbow",
+    "Whimsical",
+    "Tranquility",
+    "Elegance",
+    "Enchantment",
+    "Radiance",
+    "Blissful",
+    "Carousel",
+    "Delightful",
+    "Jubilant",
+    "Luminescent",
+    "Symphony"
+    ] # List of words for the captcha
+
+    global captcha_word
+    captcha_index = random.randint(0,19)
+    captcha_word = word_list[captcha_index]
+    font_path = ["H:\\College\\cs\\NEA\\.vscode\\open-sans\\OpenSans-Bold.ttf", "H:\\College\\cs\\NEA\\.vscode\\open-sans\\OpenSans-BoldItalic.ttf",
+                  "H:\\College\\cs\\NEA\\.vscode\\open-sans\\OpenSans-ExtraBold.ttf", "H:\\College\\cs\\NEA\\.vscode\\open-sans\\OpenSans-ExtraBoldItalic.ttf",
+                   "H:\\College\\cs\\NEA\\.vscode\\open-sans\\OpenSans-Italic.ttf", "H:\\College\\cs\\NEA\\.vscode\\open-sans\\OpenSans-Light.ttf",
+                    "H:\\College\\cs\\NEA\\.vscode\\open-sans\\OpenSans-LightItalic.ttf", "H:\\College\\cs\\NEA\\.vscode\\open-sans\\OpenSans-Regular.ttf",
+                     "H:\\College\\cs\\NEA\\.vscode\\open-sans\\OpenSans-Semibold.ttf", "H:\\College\\cs\\NEA\\.vscode\\open-sans\\OpenSans-SemiboldItalic.ttf"] # paths to the downloaded fonts
+    
+    captcha = ImageCaptcha(width=500, height=500, fonts=font_path,
+                           font_sizes=(40, 70, 100, 120))
+    captcha.write(captcha_word, "captcha.png") # Generate the captcha image and save it to file
+
+    captcha_image = Image.open("captcha.png") #Open the saved image
+    captcha_image.show()
+
 def login(): #function for logging in
     global entered_username
     entered_username = username_entry.get()
     global entered_password
     entered_password = password_entry.get()
+    global entered_captcha
+    entered_captcha = captcha_entry.get()
     conn = sqlite3.connect('Login details.db')
     cursor = conn.cursor()
     cursor.execute('SELECT username, password FROM users WHERE username=?', (entered_username,))
     user_credentials = cursor.fetchone()
-    if user_credentials and entered_password == user_credentials[1]:
-        print("Successful login")
+
+    if user_credentials and entered_password == user_credentials[1] and entered_captcha == captcha_word:
         now_logged_in()
     else:
-        messagebox.showerror("Invalid username or password", "Try again")
+        messagebox.showerror("Invalid username or password or captcha", "Try again")
 
 def on_login_button_click():
     login()
@@ -201,15 +245,18 @@ def on_open_create_login_click():
     create_login_page()
 
 #Creating widgets for the login
-login_label = tkinter.Label(frame, text="Login", bg='#467D6F', fg="#AABF11", font=("Times New Roman", 25), pady=25)
-username_label = tkinter.Label(frame, text="Username", bg='#467D6F', fg="#FFFFFF", font=("Times New Roman", 12) ,pady=5)
+login_label = tkinter.Label(frame, text="Login", bg='#161d29', fg="#444A53", font=("Times New Roman", 25), pady=25)
+username_label = tkinter.Label(frame, text="Username", bg='#161d29', fg="#FFFFFF", font=("Times New Roman", 12) ,pady=5)
 username_entry = tkinter.Entry(frame, font=("Times New Roman", 12))
-password_label = tkinter.Label(frame, text="Password", bg='#467D6F', fg="#FFFFFF", font=("Times New Roman", 12), pady=5)
+password_label = tkinter.Label(frame, text="Password", bg='#161d29', fg="#FFFFFF", font=("Times New Roman", 12), pady=5)
 password_entry = tkinter.Entry(frame, show="*", font=("Times New Roman", 12))
-no_account_label = tkinter.Label(frame, text="Not got an account? Create one!", bg='#467D6F', fg="#FFFFFF", font=("Times New Roman", 12) ,pady=5)
-login_button = tkinter.Button(frame, text="Login", bg="#AABF11", fg="#FFFFFF", font=("Times New Roman", 10), pady=5, command=on_login_button_click)
-create_login_button = tkinter.Button(frame, text="Create Account", bg="#AABF11", fg="#FFFFFF", font=("Times New Roman", 10), pady=5, command=on_open_create_login_click)
-change_password_button = tkinter.Button(frame, text="Change Password", bg="#AABF11", fg="#FFFFFF", font=("Times New Roman", 10), pady=5, command=on_change_password_click)
+no_account_label = tkinter.Label(frame, text="Not got an account? Create one!", bg='#161d29', fg="#FFFFFF", font=("Times New Roman", 12) ,pady=5)
+login_button = tkinter.Button(frame, text="Login", bg="#444A53", fg="#FFFFFF", font=("Times New Roman", 10), pady=5, command=on_login_button_click)
+create_login_button = tkinter.Button(frame, text="Create Account", bg="#444A53", fg="#FFFFFF", font=("Times New Roman", 10), pady=5, command=on_open_create_login_click)
+change_password_button = tkinter.Button(frame, text="Change Password", bg="#444A53", fg="#FFFFFF", font=("Times New Roman", 10), pady=5, command=on_change_password_click)
+captcha_label = tkinter.Label(frame, text="Captcha", bg='#161d29', fg="#FFFFFF", font=("Times New Roman", 12) ,pady=5)
+captcha_entry = tkinter.Entry(frame, font=("Times New Roman", 12))
+generate_captcha_button = tkinter.Button(frame, text="Generate Captcha", bg="#444A53", fg="#FFFFFF", font=("Times New Roman", 10), pady=5, command=generate_captcha)
 
 #Placing the widgets on the fisrt page
 login_label.grid(row=0, column=0, columnspan=2)
@@ -217,8 +264,11 @@ username_label.grid(row=1, column=0)
 username_entry.grid(row=1, column=1)
 password_label.grid(row=2, column=0)
 password_entry.grid(row=2, column=1)
-login_button.grid(row=3, column=0, columnspan =2)
-change_password_button.grid(row=3, column=2, columnspan=2)
+login_button.grid(row=5, column=0, columnspan =2)
+change_password_button.grid(row=3, column=3, columnspan=2)
+captcha_entry.grid(row=3, column=1, columnspan=2)
+captcha_label.grid(row=3, column=0) 
+generate_captcha_button.grid(row=6, column=0, columnspan=2)
 
 no_account_label.grid(row=2, column=4)
 create_login_button.grid(row=3, column=4, columnspan =2)
