@@ -71,7 +71,7 @@ def new_user(username, password):
         else:
             pass
     total_upper = sum(1 for i in password if i.isupper())
-    conn = sqlite3.connect('Login Details.db')
+    conn = sqlite3.connect('Login details.db')
     cursor = conn.cursor()
     # Check if the username already exists
     cursor.execute('SELECT username, password FROM users WHERE username=?', (username,))
@@ -92,6 +92,7 @@ def new_user(username, password):
         conn.close() #Close database
 
 def now_logged_in():
+    global now_logged_in
     now_logged_in = tkinter.Tk() #Initialising window
     now_logged_in.title("Logged in")
     now_logged_in.geometry('750x500')
@@ -105,16 +106,31 @@ def now_logged_in():
     logged_in_pigeon = tkinter.Label(now_logged_in_frame, text="Pigeon Count: ", bg='#467D6F', fg="#AABF11", font=("Times New Roman", 12), pady=25)
     logged_in_fox = tkinter.Label(now_logged_in_frame, text="Fox Count: ", bg='#467D6F', fg="#AABF11", font=("Times New Roman", 12), pady=25)
     logged_in_human = tkinter.Label(now_logged_in_frame, text="Human Count: ", bg='#467D6F', fg="#AABF11", font=("Times New Roman", 12), pady=25)
-    
+    logged_in_delete_account = tkinter.Button(now_logged_in_frame, text="Delete Account", bg="#AABF11", fg="#FFFFFF", font=("Times New Roman", 12), pady=25, command=lambda: delete_account(entered_username, entered_password))
+
     #Place widgets onto the frame
     logged_in_title.grid(row=0, column=0, columnspan=2)
     logged_in_pigeon.grid(row=1, column=0, columnspan=2)
     logged_in_fox.grid(row=2, column=0, columnspan=2)
     logged_in_human.grid(row=3, column=0, columnspan=2)
+    logged_in_delete_account.grid(row=0, column=5, columnspan=2)
 
     now_logged_in_frame.pack()
 
     now_logged_in.mainloop()
+
+def delete_account(username, password): #Deletes account that you are logged in with
+    sure = messagebox.askquestion("Ask Question","Are you sure you would like to delete your account? There is no going back", icon="info")
+    
+    if sure == "yes":
+        conn = sqlite3.connect("Login details.db")
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM users WHERE username = ? AND password = ?", (username, password))
+        conn.commit()
+        conn.close()
+        now_logged_in.destroy()
+    else:
+        pass
 
 def create_login_page():
     create_login_page = tkinter.Tk()
@@ -147,7 +163,9 @@ def create_login_page():
     create_login_page.mainloop()
     
 def login(): #function for logging in
+    global entered_username
     entered_username = username_entry.get()
+    global entered_password
     entered_password = password_entry.get()
     conn = sqlite3.connect('Login details.db')
     cursor = conn.cursor()
