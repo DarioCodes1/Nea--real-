@@ -1,9 +1,11 @@
 import tkinter
 from tkinter import messagebox
+from tkinter import font
 import sqlite3 
 import random
 from captcha.image import ImageCaptcha
 from PIL import Image
+
 
 window = tkinter.Tk() #Initialise the window
 window.title('Login Page') #Title the Window
@@ -208,14 +210,8 @@ def generate_captcha():
     global captcha_word
     captcha_index = random.randint(0,19)
     captcha_word = word_list[captcha_index]
-    font_path = ["H:\\College\\cs\\NEA\\.vscode\\open-sans\\OpenSans-Bold.ttf", "H:\\College\\cs\\NEA\\.vscode\\open-sans\\OpenSans-BoldItalic.ttf",
-                  "H:\\College\\cs\\NEA\\.vscode\\open-sans\\OpenSans-ExtraBold.ttf", "H:\\College\\cs\\NEA\\.vscode\\open-sans\\OpenSans-ExtraBoldItalic.ttf",
-                   "H:\\College\\cs\\NEA\\.vscode\\open-sans\\OpenSans-Italic.ttf", "H:\\College\\cs\\NEA\\.vscode\\open-sans\\OpenSans-Light.ttf",
-                    "H:\\College\\cs\\NEA\\.vscode\\open-sans\\OpenSans-LightItalic.ttf", "H:\\College\\cs\\NEA\\.vscode\\open-sans\\OpenSans-Regular.ttf",
-                     "H:\\College\\cs\\NEA\\.vscode\\open-sans\\OpenSans-Semibold.ttf", "H:\\College\\cs\\NEA\\.vscode\\open-sans\\OpenSans-SemiboldItalic.ttf"] # paths to the downloaded fonts
     
-    captcha = ImageCaptcha(width=500, height=500, fonts=font_path,
-                           font_sizes=(40, 70, 100, 120))
+    captcha = ImageCaptcha(width=500, height=500, font_sizes=(40, 70, 100, 120))
     captcha.write(captcha_word, "captcha.png") # Generate the captcha image and save it to file
 
     captcha_image = Image.open("captcha.png") #Open the saved image
