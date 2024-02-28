@@ -125,7 +125,7 @@ class LoginPage(tkinter.Tk):
 
     #method to open the now logged in page
     def now_logged_in(self):
-        now_logged_in_page = NowLoggedInPage(self)
+        now_logged_in_page = NowLoggedInPage(self, self.username_entry.get(), self.password_entry.get())
         now_logged_in_page.mainloop()
 
 
@@ -269,13 +269,14 @@ class ChangePasswordPage(tkinter.Tk):
 
 class NowLoggedInPage(tkinter.Tk):
     #Initialise the now logged in page
-    def __init__(self, master):
+    def __init__(self, master, entered_username, entered_password):
         super().__init__()
         self.master = master
         self.title("Logged in")
         self.geometry('750x500')
         self.configure(bg="#161d29")
-
+        self.entered_username = entered_username
+        self.entered_password = entered_password
         #Create widgets on the now logged in page
         self.create_widgets()
 
@@ -307,11 +308,11 @@ class NowLoggedInPage(tkinter.Tk):
         sure = messagebox.askquestion("Ask Question", "Are you sure you would like to delete your account? There is no going back", icon="info")
 
         if sure == "yes":
-            #Connect to the database
+            # Connect to the database
             conn = sqlite3.connect("Login details.db")
             cursor = conn.cursor()
-            #Remove user account from the database
-            cursor.execute("DELETE FROM users WHERE username = ? AND password = ?", (self.master.entered_username, encrypt(self.master.entered_password)))
+            # Remove user account from the database
+            cursor.execute("DELETE FROM users WHERE username = ? AND password = ?", (self.master.username_entry.get(), encrypt(self.master.password_entry.get())))
             conn.commit()
             conn.close()
             self.destroy()
