@@ -1,3 +1,4 @@
+from encryption import encrypt, decrypt
 import tkinter
 from tkinter import messagebox
 from tkinter import font
@@ -5,7 +6,8 @@ import sqlite3
 import random
 from captcha.image import ImageCaptcha
 from PIL import Image
-
+import numpy as np
+import egcd
 
 class LoginPage(tkinter.Tk):
 
@@ -68,11 +70,11 @@ class LoginPage(tkinter.Tk):
         cursor.execute('SELECT username, password FROM users WHERE username=?', (username,))
         user_credentials = cursor.fetchone()
 
-        #Check if the entered credentials match the database and captcha is correct
-        if user_credentials and password == user_credentials[1] and captcha == self.captcha_word:
+        # Check if the entered credentials match the database and captcha is correct
+        if user_credentials and password == decrypt(user_credentials[1]) and captcha == self.captcha_word:
             self.now_logged_in()
         else:
-            messagebox.showerror("Invalid username or password or captcha", "Try again")
+            messagebox.showerror("Try again", "Invalid username or password or captcha")
 
     #Method to open the create login page
     def on_open_create_login_click(self):
@@ -177,20 +179,19 @@ class CreateLoginPage(tkinter.Tk):
 
         #Validation for the username and password
         if existing_username:
-            messagebox.showerror("Username already exists", "The entered username already exists. Please choose a different username.")
+            messagebox.showerror("The entered username already exists. Please choose a different username.", "Username already exists")
         elif total_upper == 0:
-            messagebox.showerror("Invalid password", "Password must contain at least 1 upper case letter")
+            messagebox.showerror("Password must contain at least 1 upper case letter", "Invalid password")
         elif len(password) < 8:
-            messagebox.showerror("Invalid password", "Password must be at least 8 characters or longer")
+            messagebox.showerror("Password must be at least 8 characters or longer", "Invalid password")
         elif len(username) < 5:
-            messagebox.showerror("Invalid username", "Username must be at least 5 characters or longer")
+            messagebox.showerror("Username must be at least 5 characters or longer", "Invalid username")
         else:
-            cursor.execute('INSERT INTO users(username, password) VALUES (?,?)', (username, password))
+            cursor.execute('INSERT INTO users(username, password) VALUES (?,?)', (username, encrypt(password)))
             conn.commit()
             conn.close()
             messagebox.showinfo("Account Created", "Account created successfully!")
             self.destroy()
-
 
 class ChangePasswordPage(tkinter.Tk):
     #Initialise the change password page
@@ -240,7 +241,7 @@ class ChangePasswordPage(tkinter.Tk):
         cursor = conn.cursor()
 
         #Check if old username and password match
-        cursor.execute('SELECT username, password FROM users WHERE username=? AND password=?', (username, old_password))
+        cursor.execute('SELECT username, password FROM users WHERE username=? AND password=?', (username, encrypt(old_password)))
         user_credentials = cursor.fetchone()
 
         #Confirm password change
@@ -254,7 +255,7 @@ class ChangePasswordPage(tkinter.Tk):
                     messagebox.showerror("Invalid password", "Password must be at least 8 characters or longer")
                 else:
                     #Update password in the database
-                    cursor.execute('UPDATE users SET password=? WHERE username=?', (new_password, username))
+                    cursor.execute('UPDATE users SET password=? WHERE username=?', (encrypt(new_password), username))
                     conn.commit()
                     conn.close()
                     messagebox.showinfo("Password Changed", "Password has been changed successfully!")
@@ -310,7 +311,7 @@ class NowLoggedInPage(tkinter.Tk):
             conn = sqlite3.connect("Login details.db")
             cursor = conn.cursor()
             #Remove user account from the database
-            cursor.execute("DELETE FROM users WHERE username = ? AND password = ?", (self.master.entered_username, self.master.entered_password))
+            cursor.execute("DELETE FROM users WHERE username = ? AND password = ?", (self.master.entered_username, encrypt(self.master.entered_password)))
             conn.commit()
             conn.close()
             self.destroy()
