@@ -2,7 +2,7 @@ import numpy as np
 import egcd
 
 padding_count = 0  # Counter for padding added during encryption
-
+constant_shift = 7
 # Define the full alphabet
 alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+[]{}|;:',.<>/?`~"
 
@@ -99,27 +99,26 @@ def hill_cipher_decrypt(ciphered_text, key_inverse):
 
 #Function to encrypt a message using a backwards Caesar cipher
 def backwards_caeser_encrypt(text, shift):
-    new_text = ''
-    for char in text:
-        if char in alphabet:
-            index = alphabet.index(char)
-            new_index = (index - shift) % len(alphabet)
-            new_char = alphabet[new_index]
-            new_text += new_char
-    return new_text
+    def shift_char(char, shift): #Nested shift_char function used to shift one character
+        base = alphabet.index(char) #Calculate the index of the character in the alphabet
+        return alphabet[(base - shift) % len(alphabet)] #perform the backwards shift
+    if len(text) == 0: # Base Case: if the input is empty, the recursion stops, and nothing is returned for that character
+        return ''
+    else:
+        return shift_char(text[0], shift) + backwards_caeser_encrypt(text[1:], shift) # Apply the shift to the first character of the text, then return this char concatenated with the result of the shift of the next character and so on
 
 # Function to decrypt a message encrypted with a backwards Caesar cipher
 def backwards_caeser_decrypt(text, shift):
     return backwards_caeser_encrypt(text, -shift) #Simply using the inverse shift for the encrypt function 
 
-# Function to encrypt a message that's gone through both ciphers
+# Function to encrypt a message that's gone t   hrough both ciphers
 def encrypt(text):
     key = np.array([[3, 2], [5, 7]])  # instantiate key matrix
-    caeser = backwards_caeser_encrypt(text, 7)  # Encrypt the text using backwards Caesar cipher
+    caeser = backwards_caeser_encrypt(text, constant_shift)  # Encrypt the text using backwards Caesar cipher
     return hill_cipher_encrypt(caeser, key)  # Encrypt the Caesar cipher output using Hill cipher
 
 # Function to decrypt a message that's gone through both ciphers (opposite order as encrypt)
 def decrypt(encrypted_text):
     keyinv = matrix_modulus_inverse(np.array([[3, 2], [5, 7]]))  # Calculate the inverse key matrix
     hill = hill_cipher_decrypt(encrypted_text, keyinv)  #Decrypt the text using Hill cipher
-    return backwards_caeser_decrypt(hill, 7)  # Decrypt the Hill cipher output using backwards Caesar cipher
+    return backwards_caeser_decrypt(hill, constant_shift)  # Decrypt the Hill cipher output using backwards Caesar cipher

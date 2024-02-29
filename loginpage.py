@@ -1,7 +1,6 @@
 from encryption import encrypt, decrypt
 import tkinter
 from tkinter import messagebox
-from tkinter import font
 import sqlite3 
 import random
 from captcha.image import ImageCaptcha
