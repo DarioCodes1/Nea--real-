@@ -111,7 +111,7 @@ def backwards_caeser_encrypt(text, shift):
 def backwards_caeser_decrypt(text, shift):
     return backwards_caeser_encrypt(text, -shift) #Simply using the inverse shift for the encrypt function 
 
-# Function to encrypt a message that's gone t   hrough both ciphers
+# Function to encrypt a message that's gone through both ciphers
 def encrypt(text):
     key = np.array([[3, 2], [5, 7]])  # instantiate key matrix
     caeser = backwards_caeser_encrypt(text, constant_shift)  # Encrypt the text using backwards Caesar cipher
