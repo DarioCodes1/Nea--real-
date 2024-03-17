@@ -76,11 +76,11 @@ class LoginPage(tkinter.Tk):
         if user_credentials and password == decrypt(user_credentials[1]) and captcha == self.captcha_word:
             self.now_logged_in()
         else:
+            self.attempt_login_count +=1 #Increments attempt count
             messagebox.showerror("Try again", "Invalid username, password or captcha")
-            self.attempt_login_count +=1
             if self.attempt_login_count > 3:
-                self.show_too_many_attempts_message()
                 self.disable_login_widgets()
+                self.show_too_many_attempts_message()
                 self.after(120000, self.show_login_widgets) # After 2 minutes in milliseconds, the self.show_widgets method is called
             else:
                 pass
@@ -89,9 +89,10 @@ class LoginPage(tkinter.Tk):
     def show_too_many_attempts_message(self):
         # Show message for too many attempts
         self.too_many_login_attempts_label.grid(row=1, column=0)
+        messagebox.showerror("Wrong Inputs", "You are now locked from attempting to login for the next 2 minutes.")
 
     def disable_login_widgets(self):
-        # Hide login widgets
+        #Hide login widgets
         self.login_label.grid_forget()
         self.password_label.grid_forget()
         self.password_entry.grid_forget()
@@ -103,7 +104,7 @@ class LoginPage(tkinter.Tk):
         self.generate_captcha_button.grid_forget()
 
     def show_login_widgets(self):
-        # Show login widgets again after the 2 minutes
+        # Show login widgets again after the 2 minute
         self.create_login_button.grid(row=3, column=4, columnspan=2)
         self.login_label.grid(row=0, column=0, columnspan=2)
         self.username_label.grid(row=1, column=0)
@@ -308,10 +309,10 @@ class ChangePasswordPage(tkinter.Tk):
             else:
                 conn.close()
                 messagebox.showerror("Change Password Failed", "Invalid username or old password.")
-                self.attempt_change_login += 1
+                self.attempt_change_login += 1 # Increments the count
                 if self.attempt_change_login > 3:
-                    self.show_too_many_change_password_attempts_message()
-                    self.disable_change_password_widgets()
+                    self.disable_change_password_widgets() # Gets rid of certain widgets, stopping the user from attempting to change password
+                    self.show_too_many_change_password_attempts_message() #Places the label
                     self.after(120000, self.show_change_password_widgets) # After 2 minutes in milliseconds, the self.show_widgets method is called
                 else:
                     pass
@@ -319,7 +320,7 @@ class ChangePasswordPage(tkinter.Tk):
         else:
             pass
             
-    def show_change_password_widgets(self):
+    def show_change_password_widgets(self): #Places the widgets back when called
         self.username_label.grid(row=0, column=0)
         self.username_entry.grid(row=0, column=1)
         self.old_password_label.grid(row=1, column=0)
@@ -327,14 +328,15 @@ class ChangePasswordPage(tkinter.Tk):
         self.new_password_label.grid(row=2, column=0)
         self.new_password_entry.grid(row=2, column=1)
         self.change_password_button.grid(row=3, column=0, columnspan=2)
-        self.too_many_change_password_attempts_label.grid_forget()
-        self.attempt_change_login = 0
+        self.too_many_change_password_attempts_label.grid_forget() #
+        self.attempt_change_login = 0 #set the attempts to 0 so that after a further 3 attempts, you will be locked out again
 
     def show_too_many_change_password_attempts_message(self):
-        self.too_many_change_password_attempts_label.grid(row=1, column=0)
+        self.too_many_change_password_attempts_label.grid(row=1, column=0) # Places the label on the screen telling the user that they must wait
+        messagebox.showerror("Wrong Inputs", "You are now locked from attempting to change a password for the next 2 minutes.")
 
     def disable_change_password_widgets(self):
-        self.username_label.grid_forget() 
+        self.username_label.grid_forget() #Hiding all the labels that have to go temporarily
         self.username_entry.grid_forget()
         self.old_password_label.grid_forget()
         self.old_password_entry.grid_forget()
