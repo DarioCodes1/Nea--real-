@@ -7,6 +7,7 @@ from captcha.image import ImageCaptcha
 from PIL import Image
 import numpy as np
 import egcd
+import time
 button_colour = "#2F7BA3" #Easier to change colours now as one variable can be changed to change the whole colour scheme
 
 class LoginPage(tkinter.Tk):
@@ -17,7 +18,7 @@ class LoginPage(tkinter.Tk):
         self.title('Login Page')
         self.geometry('750x500')
         self.configure(bg='#161d29')
-
+        self.attempt_login_count = 0
         #Create a frame to hold the widgets
         self.frame = tkinter.Frame(self, bg="#161d29")
         self.frame.pack()
@@ -27,37 +28,37 @@ class LoginPage(tkinter.Tk):
     #Method to create widgets for the login page
     def create_widgets(self):
         #Labels and buttons for username, password, captcha, and login being created
-        login_label = tkinter.Label(self.frame, text="Login", bg='#161d29', fg="#FFFFFF", font=("Times New Roman", 25), pady=25)
-        username_label = tkinter.Label(self.frame, text="Username", bg='#161d29', fg="#FFFFFF", font=("Times New Roman", 12), pady=5)
+        self.login_label = tkinter.Label(self.frame, text="Login", bg='#161d29', fg="#FFFFFF", font=("Times New Roman", 25), pady=25)
+        self.username_label = tkinter.Label(self.frame, text="Username", bg='#161d29', fg="#FFFFFF", font=("Times New Roman", 12), pady=5)
         self.username_entry = tkinter.Entry(self.frame, font=("Times New Roman", 12))
-        password_label = tkinter.Label(self.frame, text="Password", bg='#161d29', fg="#FFFFFF", font=("Times New Roman", 12), pady=5)
+        self.password_label = tkinter.Label(self.frame, text="Password", bg='#161d29', fg="#FFFFFF", font=("Times New Roman", 12), pady=5)
         self.password_entry = tkinter.Entry(self.frame, show="*", font=("Times New Roman", 12))
-        no_account_label = tkinter.Label(self.frame, text="Not got an account? Create one!", bg='#161d29', fg="#FFFFFF", font=("Times New Roman", 12), pady=5)
-        login_button = tkinter.Button(self.frame, text="Login", bg=button_colour, fg="#FFFFFF", font=("Times New Roman", 10), pady=5, command=self.on_login_button_click)
-        create_login_button = tkinter.Button(self.frame, text="Create Account", bg=button_colour, fg="#FFFFFF", font=("Times New Roman", 10), pady=5, command=self.on_open_create_login_click)
-        change_password_button = tkinter.Button(self.frame, text="Change Password", bg=button_colour, fg="#FFFFFF", font=("Times New Roman", 10), pady=5, command=self.on_change_password_click)
-        captcha_label = tkinter.Label(self.frame, text="Captcha", bg='#161d29', fg="#FFFFFF", font=("Times New Roman", 12), pady=5)
+        self.no_account_label = tkinter.Label(self.frame, text="Not got an account? Create one!", bg='#161d29', fg="#FFFFFF", font=("Times New Roman", 12), pady=5)
+        self.login_button = tkinter.Button(self.frame, text="Login", bg=button_colour, fg="#FFFFFF", font=("Times New Roman", 10), pady=5, command=self.on_login_button_click)
+        self.create_login_button = tkinter.Button(self.frame, text="Create Account", bg=button_colour, fg="#FFFFFF", font=("Times New Roman", 10), pady=5, command=self.on_open_create_login_click)
+        self.change_password_button = tkinter.Button(self.frame, text="Change Password", bg=button_colour, fg="#FFFFFF", font=("Times New Roman", 10), pady=5, command=self.on_change_password_click)
+        self.captcha_label = tkinter.Label(self.frame, text="Captcha", bg='#161d29', fg="#FFFFFF", font=("Times New Roman", 12), pady=5)
         self.captcha_entry = tkinter.Entry(self.frame, font=("Times New Roman", 12))
-        generate_captcha_button = tkinter.Button(self.frame, text="Generate Captcha", bg=button_colour, fg="#FFFFFF", font=("Times New Roman", 10), pady=5, command=self.generate_captcha)
+        self.generate_captcha_button = tkinter.Button(self.frame, text="Generate Captcha", bg=button_colour, fg="#FFFFFF", font=("Times New Roman", 10), pady=5, command=self.generate_captcha)
+        self.too_many_login_attempts_label = tkinter.Label(self.frame, text="Too many login attempts! Wait 2 minutes to try again", bg='#161d29', fg="#FFFFFF", font=("Times New Roman", 12), pady=5)
 
         #Grid layout for the widgets
-        create_login_button.grid(row=3, column=4, columnspan=2)
-        login_label.grid(row=0, column=0, columnspan=2)
-        username_label.grid(row=1, column=0)
+        self.create_login_button.grid(row=3, column=4, columnspan=2)
+        self.login_label.grid(row=0, column=0, columnspan=2)
+        self.username_label.grid(row=1, column=0)
         self.username_entry.grid(row=1, column=1)
-        password_label.grid(row=2, column=0)
+        self.password_label.grid(row=2, column=0)
         self.password_entry.grid(row=2, column=1)
-        login_button.grid(row=5, column=0, columnspan=2)
-        change_password_button.grid(row=4, column=3, columnspan=2)
+        self.login_button.grid(row=5, column=0, columnspan=2)
+        self.change_password_button.grid(row=4, column=3, columnspan=2)
         self.captcha_entry.grid(row=3, column=1, columnspan=2)
-        captcha_label.grid(row=3, column=0) 
-        generate_captcha_button.grid(row=4, column=0, columnspan=2)
+        self.captcha_label.grid(row=3, column=0) 
+        self.generate_captcha_button.grid(row=4, column=0, columnspan=2)
 
-        no_account_label.grid(row=2, column=4)
+        self.no_account_label.grid(row=2, column=4)
 
     #Method to handle login button click
     def on_login_button_click(self):
-        attempt_login_count = 0
         #Get the entered username, password, and captcha and check 
         username = self.username_entry.get()
         password = self.password_entry.get()
@@ -76,9 +77,47 @@ class LoginPage(tkinter.Tk):
             self.now_logged_in()
         else:
             messagebox.showerror("Try again", "Invalid username, password or captcha")
-            attempt_login_count +=1
+            self.attempt_login_count +=1
+            if self.attempt_login_count > 3:
+                self.show_too_many_attempts_message()
+                self.disable_login_widgets()
+                self.after(120000, self.show_login_widgets) # After 2 minutes in milliseconds, the self.show_widgets method is called
+            else:
+                pass
         conn.close()
            
+    def show_too_many_attempts_message(self):
+        # Show message for too many attempts
+        self.too_many_login_attempts_label.grid(row=1, column=0)
+
+    def disable_login_widgets(self):
+        # Hide login widgets
+        self.login_label.grid_forget()
+        self.password_label.grid_forget()
+        self.password_entry.grid_forget()
+        self.username_entry.grid_forget()
+        self.username_label.grid_forget() 
+        self.captcha_entry.grid_forget()
+        self.captcha_label.grid_forget()
+        self.login_button.grid_forget()
+        self.generate_captcha_button.grid_forget()
+
+    def show_login_widgets(self):
+        # Show login widgets again after the 2 minutes
+        self.create_login_button.grid(row=3, column=4, columnspan=2)
+        self.login_label.grid(row=0, column=0, columnspan=2)
+        self.username_label.grid(row=1, column=0)
+        self.username_entry.grid(row=1, column=1)
+        self.password_label.grid(row=2, column=0)
+        self.password_entry.grid(row=2, column=1)
+        self.login_button.grid(row=5, column=0, columnspan=2)
+        self.change_password_button.grid(row=4, column=3, columnspan=2)
+        self.captcha_entry.grid(row=3, column=1, columnspan=2)
+        self.captcha_label.grid(row=3, column=0) 
+        self.generate_captcha_button.grid(row=4, column=0, columnspan=2)
+        self.no_account_label.grid(row=2, column=4)
+        self.too_many_login_attempts_label.grid_forget()
+        self.attempt_login_count = 0
 
     #Method to open the create login page
     def on_open_create_login_click(self):
@@ -206,7 +245,7 @@ class ChangePasswordPage(tkinter.Tk):
         self.title("Change Password")
         self.geometry('400x300')
         self.configure(bg="#161d29")
-
+        self.attempt_change_login = 0
         #Create widgets on the change password page
         self.create_widgets()
 
@@ -214,22 +253,23 @@ class ChangePasswordPage(tkinter.Tk):
     def create_widgets(self):
         change_password_frame = tkinter.Frame(self, bg="#161d29")
 
-        username_label = tkinter.Label(change_password_frame, text="Username", bg='#161d29', fg="#FFFFFF", font=("Times New Roman", 12), pady=5)
+        self.username_label = tkinter.Label(change_password_frame, text="Username", bg='#161d29', fg="#FFFFFF", font=("Times New Roman", 12), pady=5)
         self.username_entry = tkinter.Entry(change_password_frame, font=("Times New Roman", 12))
-        old_password_label = tkinter.Label(change_password_frame, text="Old Password", bg='#161d29', fg="#FFFFFF", font=("Times New Roman", 12), pady=5)
+        self.old_password_label = tkinter.Label(change_password_frame, text="Old Password", bg='#161d29', fg="#FFFFFF", font=("Times New Roman", 12), pady=5)
         self.old_password_entry = tkinter.Entry(change_password_frame, show="*", font=("Times New Roman", 12))
-        new_password_label = tkinter.Label(change_password_frame, text="New Password", bg='#161d29', fg="#FFFFFF", font=("Times New Roman", 12), pady=5)
+        self.new_password_label = tkinter.Label(change_password_frame, text="New Password", bg='#161d29', fg="#FFFFFF", font=("Times New Roman", 12), pady=5)
         self.new_password_entry = tkinter.Entry(change_password_frame, show="*", font=("Times New Roman", 12))
-        change_password_button = tkinter.Button(change_password_frame, text="Change Password", bg=button_colour, fg="#FFFFFF", font=("Times New Roman", 10), pady=5, command=self.change_password)
+        self.change_password_button = tkinter.Button(change_password_frame, text="Change Password", bg=button_colour, fg="#FFFFFF", font=("Times New Roman", 10), pady=5, command=self.change_password)
+        self.too_many_change_password_attempts_label = tkinter.Label(change_password_frame, text="Too many attempts! Wait 2 minutes to try again", bg='#161d29', fg="#FFFFFF", font=("Times New Roman", 12), pady=5)
 
         #Grid layout for widgets
-        username_label.grid(row=0, column=0)
+        self.username_label.grid(row=0, column=0)
         self.username_entry.grid(row=0, column=1)
-        old_password_label.grid(row=1, column=0)
+        self.old_password_label.grid(row=1, column=0)
         self.old_password_entry.grid(row=1, column=1)
-        new_password_label.grid(row=2, column=0)
+        self.new_password_label.grid(row=2, column=0)
         self.new_password_entry.grid(row=2, column=1)
-        change_password_button.grid(row=3, column=0, columnspan=2)
+        self.change_password_button.grid(row=3, column=0, columnspan=2)
 
         change_password_frame.pack()
 
@@ -250,7 +290,7 @@ class ChangePasswordPage(tkinter.Tk):
         user_credentials = cursor.fetchone()
 
         #Confirm password change
-        sure = messagebox.askquestion("Ask Question", "Are you sure you would like to delete your account? There is no going back", icon="info")
+        sure = messagebox.askquestion("Ask Question", "Are you sure you would like to change the password to your account? There is no going back", icon="info")
         if sure == "yes":
             if user_credentials:
                 #Validate new password
@@ -268,8 +308,39 @@ class ChangePasswordPage(tkinter.Tk):
             else:
                 conn.close()
                 messagebox.showerror("Change Password Failed", "Invalid username or old password.")
+                self.attempt_change_login += 1
+                if self.attempt_change_login > 3:
+                    self.show_too_many_change_password_attempts_message()
+                    self.disable_change_password_widgets()
+                    self.after(120000, self.show_change_password_widgets) # After 2 minutes in milliseconds, the self.show_widgets method is called
+                else:
+                    pass
+            conn.close()
         else:
             pass
+            
+    def show_change_password_widgets(self):
+        self.username_label.grid(row=0, column=0)
+        self.username_entry.grid(row=0, column=1)
+        self.old_password_label.grid(row=1, column=0)
+        self.old_password_entry.grid(row=1, column=1)
+        self.new_password_label.grid(row=2, column=0)
+        self.new_password_entry.grid(row=2, column=1)
+        self.change_password_button.grid(row=3, column=0, columnspan=2)
+        self.too_many_change_password_attempts_label.grid_forget()
+        self.attempt_change_login = 0
+
+    def show_too_many_change_password_attempts_message(self):
+        self.too_many_change_password_attempts_label.grid(row=1, column=0)
+
+    def disable_change_password_widgets(self):
+        self.username_label.grid_forget() 
+        self.username_entry.grid_forget()
+        self.old_password_label.grid_forget()
+        self.old_password_entry.grid_forget()
+        self.new_password_label.grid_forget()
+        self.new_password_entry.grid_forget()
+        self.change_password_button.grid_forget()
 
 
 class NowLoggedInPage(tkinter.Tk):
