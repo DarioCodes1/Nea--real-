@@ -69,11 +69,13 @@ class LoginPage(tkinter.Tk):
         cursor = conn.cursor()
 
         #Retrieve user credentials from the database
-        cursor.execute('SELECT username, password FROM users WHERE username=?', (username,))
+        cursor.execute('SELECT id, username, password FROM users WHERE username=?', (username,)) #Looking for the userID now
         user_credentials = cursor.fetchone()
 
         # Check if the entered credentials match the database and captcha is correct
-        if user_credentials and password == decrypt(user_credentials[1]) and captcha == self.captcha_word:
+        if user_credentials and password == decrypt(user_credentials[2]) and captcha == self.captcha_word: #changed as there is another field in the database table now
+            global logged_in_user_id #so NowLoggedIn class can access this data
+            logged_in_user_id = user_credentials[0]
             self.now_logged_in()
         else:
             self.attempt_login_count +=1 #Increments attempt count
@@ -171,7 +173,7 @@ class LoginPage(tkinter.Tk):
     def now_logged_in(self):
         now_logged_in_page = NowLoggedInPage(self, self.username_entry.get(), self.password_entry.get())
         now_logged_in_page.mainloop()
-
+        self.attempt_login_count = 0 #Allows the user to have 3 attempts after they have logged in
 
 class CreateLoginPage(tkinter.Tk):
     #Initialise the create login page
@@ -305,6 +307,7 @@ class ChangePasswordPage(tkinter.Tk):
                     conn.commit()
                     conn.close()
                     messagebox.showinfo("Password Changed", "Password has been changed successfully!")
+                    self.attempt_change_login = 0 #Allows the user to have 3 attempts after they have changed the password
                     self.destroy()
             else:
                 conn.close()
@@ -370,7 +373,7 @@ class NowLoggedInPage(tkinter.Tk):
         cursor = conn.cursor()
 
         # Fetches pigeon data
-        cursor.execute("SELECT DateTime FROM users WHERE Type = ?", ("Pigeon",))
+        ("SELECT DateTime FROM users WHERE Type = ? AND Userid = ?", ("Pigeon", logged_in_user_id)) #Requires the right userid (so not any user can access your data)
         rows = cursor.fetchall()
         # Iterate over fetched rows
         for row in rows:
@@ -379,7 +382,7 @@ class NowLoggedInPage(tkinter.Tk):
             self.pigeon_count += 1 # Increment pigeon count
 
         # Fetch fox data
-        cursor.execute("SELECT Datetime FROM users WHERE Type = ?", ("Fox",))
+        cursor.execute("SELECT Datetime FROM users WHERE Type = ? AND Userid = ?", ("Fox", logged_in_user_id)) #Requires the right userid (so not any user can access your data)
         rows = cursor.fetchall()
         # Iterate over fetched rows (again)
         for row in rows:
@@ -388,7 +391,7 @@ class NowLoggedInPage(tkinter.Tk):
             self.fox_count += 1 # Increment fox count
 
         # Fetch human data
-        cursor.execute("SELECT Datetime FROM users WHERE Type = ?", ("Human",))
+        cursor.execute("SELECT Datetime FROM users WHERE Type = ? AND Userid = ?", ("Human", logged_in_user_id)) #Requires the right userid (so not any user can access your data)
         rows = cursor.fetchall()
         # Iterate over fetched rows (again)
         for row in rows:
@@ -484,15 +487,17 @@ def create_login_database():
     conn.commit()
     conn.close()
 
-#Subroutine to create a temporary database storing supposed data of date and time of arrival and type of visitor (and ID)
+#Subroutine to create a temporary database storing supposed data of datetime of arrival and type of visitor ID, and the userId of the user to which the data belongs
+
 def create_data_database():
     conn = sqlite3.connect('Data details.db') 
     cursor = conn.cursor() 
     cursor.execute('''
                    CREATE TABLE IF NOT EXISTS users(
-                       id INTEGER PRIMARY KEY AUTOINCREMENT,
-                       DateTime DATETIME NOT NULL,
-                       Type STRING NOT NULL
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    Userid INTEGER NOT NULL,
+                    DateTime DATETIME NOT NULL,
+                    Type STRING NOT NULL
                     )
         ''') 
     conn.commit()
