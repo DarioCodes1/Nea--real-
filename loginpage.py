@@ -6,8 +6,7 @@ import random
 from captcha.image import ImageCaptcha
 from PIL import Image
 import numpy as np
-import egcd
-import time
+
 button_colour = "#2F7BA3" #Easier to change colours now as one variable can be changed to change the whole colour scheme
 
 class LoginPage(tkinter.Tk):
@@ -417,6 +416,7 @@ class NowLoggedInPage(tkinter.Tk):
         self.logged_in_fox_count = tkinter.Label(now_logged_in_frame, text="The Fox Count: " + str(self.fox_count), bg='#161d29', fg="#FFFFFF", font=("Times New Roman", 12), pady=25) # Concatenated the fox count (as a string)
         self.logged_in_human_count = tkinter.Label(now_logged_in_frame, text="The Human Count: " + str(self.human_count), bg='#161d29', fg="#FFFFFF", font=("Times New Roman", 12), pady=25) # Concatenated the human count (as a string)
         logged_in_delete_account = tkinter.Button(now_logged_in_frame, text="Delete Account", bg=button_colour, fg="#FFFFFF", font=("Times New Roman", 12), pady=25, command=self.delete_account)
+        print_to_text_file_button = tkinter.Button(now_logged_in_frame, text="Print to File", bg=button_colour, fg="#FFFFFF", font=("Times New Roman", 12), pady=25,command=self.print_to_text_file)
 
         #Animal datetimes labels
         self.pigeon_datetime_label = tkinter.Label(now_logged_in_frame, text="Pigeon Datetimes:", bg='#161d29', fg="#FFFFFF", font=("Times New Roman", 12), pady=25)
@@ -433,8 +433,41 @@ class NowLoggedInPage(tkinter.Tk):
         self.pigeon_datetime_label.grid(row=4, column=0, columnspan=2)
         self.fox_datetime_label.grid(row=5, column=0, columnspan=2)
         self.human_datetime_label.grid(row=6, column=0, columnspan=2)
+        print_to_text_file_button.grid(row=0, column=3, columnspan=2)
 
         now_logged_in_frame.pack()
+    
+    def print_to_text_file(self):
+        file_path = "userdata.txt"
+        try:
+            #Open the file for writing
+            file = open(file_path, "w")
+
+            # Write pigeon datetimes and count
+            file.write("Pigeon Datetimes:\n")
+            for index in range(len(self.pigeon_datetimes)): # Loop through each pigeon datetime
+                file.write(str(index + 1) + ". " + str(self.pigeon_datetimes[index]) + "\n") #Write the datetime to the file with its corresponding index
+            file.write("Pigeon Count: " + str(self.pigeon_count) + "\n") # Write the pigeon count to the file
+
+            # Write fox datetimes and count
+            file.write("Fox Datetimes:\n")
+            for index in range(len(self.fox_datetimes)): # Loop through each fox datetime
+                file.write(str(index + 1) + ". " + str(self.fox_datetimes[index]) + "\n") #Write the datetime to the file with its corresponding index
+            file.write("Fox Count: " + str(self.fox_count) + "\n") # Write the fox count to the file
+
+            # Write fuman datetimes and count
+            file.write("Human Datetimes:\n")
+            for index in range(len(self.human_datetimes)): # Loop through each fox datetime
+                file.write(str(index + 1) + ". " + str(self.human_datetimes[index]) + "\n") #Write the datetime to the file with its corresponding index
+            file.write("Human Count: " + str(self.human_count) + "\n") # Write the human count to the file
+
+            file.close() # Close the file after writing
+
+            # Print success message
+            messagebox.showinfo("Data Written", f"Data successfully written to {file_path}")
+        except Exception as exception:
+            # Print error message if an exception occurs
+            messagebox.showerror("Error", f"An error occurred while writing to the file: {exception}")
 
     def display_datetimes(self, frame):
         # Define a list of tuples, each containing animal type, corresponding datetimes list and label (took way too long to figure out a solution here)
