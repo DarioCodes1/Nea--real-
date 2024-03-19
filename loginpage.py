@@ -6,6 +6,13 @@ import random
 from captcha.image import ImageCaptcha
 from PIL import Image
 import numpy as np
+from display import open_camera_display
+from Movement_Y import move_up, move_down
+from Movement_X import move_left, move_right
+import threading
+
+# Create a thread for the camera display function
+camera_thread = threading.Thread(target=open_camera_display)
 
 button_colour = "#2F7BA3" #Easier to change colours now as one variable can be changed to change the whole colour scheme
 
@@ -423,6 +430,22 @@ class NowLoggedInPage(tkinter.Tk):
         self.fox_datetime_label = tkinter.Label(now_logged_in_frame, text="Fox Datetimes:", bg='#161d29', fg="#FFFFFF", font=("Times New Roman", 12), pady=25)
         self.human_datetime_label = tkinter.Label(now_logged_in_frame, text="Human Datetimes:", bg='#161d29', fg="#FFFFFF", font=("Times New Roman", 12), pady=25)
 
+        # Buttons for movement and display
+        speed_value_entry = tkinter.Entry(now_logged_in_frame, font=("Times New Roman", 12))
+        steps_value_entry = tkinter.Entry(now_logged_in_frame, font=("Times New Roman", 12))
+        display_button = tkinter.Button(now_logged_in_frame, text="Open Display", bg=button_colour, fg="#FFFFFF", font=("Times New Roman", 12), pady=25,command=camera_thread.start)
+        move_up_button = tkinter.Button(now_logged_in_frame, text = "UP", bg=button_colour, fg="#FFFFFF", font=("Times New Roman", 12), pady=25,command=lambda: move_up(speed_value_entry.get(),steps_value_entry.get()))
+        move_down_button = tkinter.Button(now_logged_in_frame, text = "DOWN", bg=button_colour, fg="#FFFFFF", font=("Times New Roman", 12), pady=25,command=lambda: move_down(speed_value_entry.get(),steps_value_entry.get()))
+        move_right_button = tkinter.Button(now_logged_in_frame, text = "-->", bg=button_colour, fg="#FFFFFF", font=("Times New Roman", 12), pady=25,command=lambda: move_right(speed_value_entry.get(),steps_value_entry.get()))
+        move_left_button = tkinter.Button(now_logged_in_frame, text = "<--", bg=button_colour, fg="#FFFFFF", font=("Times New Roman", 12), pady=25,command=lambda: move_left(speed_value_entry.get(),steps_value_entry.get()))
+        speed_value_label = tkinter.Label(now_logged_in_frame, text="Speed:", bg='#161d29', fg="#FFFFFF", font=("Times New Roman", 12), pady=25)
+        steps_value_label = tkinter.Label(now_logged_in_frame, text="Steps:", bg='#161d29', fg="#FFFFFF", font=("Times New Roman", 12), pady=25)
+
+        #Buttons for adding to counts
+        human_count_button = tkinter.Button(now_logged_in_frame, text = "Human Detected", bg=button_colour, fg="#FFFFFF", font=("Times New Roman", 12), pady=25,)
+        fox_count_button = tkinter.Button(now_logged_in_frame, text = "Fox Detected", bg=button_colour, fg="#FFFFFF", font=("Times New Roman", 12), pady=25,)
+        pigeon_count_button = tkinter.Button(now_logged_in_frame, text = "Pigeon Detected", bg=button_colour, fg="#FFFFFF", font=("Times New Roman", 12), pady=25,)
+
         # Grid layout for widgets
         logged_in_title.grid(row=0, column=0, columnspan=2)
         self.logged_in_pigeon_count.grid(row=1, column=0, columnspan=2)
@@ -434,6 +457,19 @@ class NowLoggedInPage(tkinter.Tk):
         self.fox_datetime_label.grid(row=5, column=0, columnspan=2)
         self.human_datetime_label.grid(row=6, column=0, columnspan=2)
         print_to_text_file_button.grid(row=0, column=3, columnspan=2)
+        display_button.grid(row=0, column=7, columnspan=1)
+        human_count_button.grid(row=0, column=8, columnspan=1)
+        pigeon_count_button.grid(row=0, column=9, columnspan=1)
+        fox_count_button.grid(row=0, column=10, columnspan=1)
+
+        speed_value_entry.grid(row=5, column=7, columnspan=1)
+        steps_value_entry.grid(row=6, column=7, columnspan=1)
+        speed_value_label.grid(row=5, column=6, columnspan=1)
+        steps_value_label.grid(row=6, column=6, columnspan=1)
+        move_up_button.grid(row=2, column=6, columnspan=1)
+        move_down_button.grid(row=4, column=6, columnspan=1)
+        move_right_button.grid(row=3, column=7, columnspan=1)
+        move_left_button.grid(row=3, column=5, columnspan=1)
 
         now_logged_in_frame.pack()
     
