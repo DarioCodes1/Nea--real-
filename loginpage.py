@@ -6,6 +6,13 @@ import random
 from captcha.image import ImageCaptcha
 from PIL import Image
 import numpy as np
+from display import open_camera_display
+from Movement_Y import move_up, move_down
+from Movement_X import move_left, move_right
+import threading
+
+# Create a thread for the camera display function
+camera_thread = threading.Thread(target=open_camera_display)
 
 button_colour = "#2F7BA3" #Easier to change colours now as one variable can be changed to change the whole colour scheme
 
@@ -345,7 +352,6 @@ class ChangePasswordPage(tkinter.Tk):
         self.new_password_label.grid_forget()
         self.new_password_entry.grid_forget()
         self.change_password_button.grid_forget()
-
 
 class NowLoggedInPage(tkinter.Tk):
     #Initialise the now logged in page
