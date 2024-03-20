@@ -74,7 +74,6 @@ class LoginPage(tkinter.Tk):
         #Connect to the database
         conn = sqlite3.connect('Login details.db')
         cursor = conn.cursor()
-
         #Retrieve user credentials from the database
         cursor.execute('SELECT id, username, password FROM users WHERE username=?', (username,)) #Looking for the userID now
         user_credentials = cursor.fetchone()
