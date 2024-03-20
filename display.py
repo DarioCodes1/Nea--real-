@@ -18,5 +18,3 @@ def open_camera_display():
 
     cap.release()  # When everything done, release the capture
     cv.destroyAllWindows()
-
-open_camera_display()
