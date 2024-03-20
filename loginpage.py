@@ -363,7 +363,7 @@ class NowLoggedInPage(tkinter.Tk):
         self.human_count = 0
         self.master = master
         self.title("Logged in")
-        self.geometry('900x1000')
+        self.geometry('1000x1000')
         self.configure(bg="#161d29")
         self.pigeon_datetimes = [] # Create empty lists for the datetimes
         self.fox_datetimes = [] 
@@ -455,10 +455,10 @@ class NowLoggedInPage(tkinter.Tk):
         speed_value_entry = tkinter.Entry(now_logged_in_frame, font=("Times New Roman", 12))
         steps_value_entry = tkinter.Entry(now_logged_in_frame, font=("Times New Roman", 12))
         display_button = tkinter.Button(now_logged_in_frame, text="Open Display", bg=button_colour, fg="#FFFFFF", font=("Times New Roman", 12), pady=25,command=camera_thread.start)
-        move_up_button = tkinter.Button(now_logged_in_frame, text = "UP", bg=button_colour, fg="#FFFFFF", font=("Times New Roman", 12), pady=25,command=lambda: move_up(speed_value_entry.get(),steps_value_entry.get()))
-        move_down_button = tkinter.Button(now_logged_in_frame, text = "DOWN", bg=button_colour, fg="#FFFFFF", font=("Times New Roman", 12), pady=25,command=lambda: move_down(speed_value_entry.get(),steps_value_entry.get()))
-        move_right_button = tkinter.Button(now_logged_in_frame, text = "-->", bg=button_colour, fg="#FFFFFF", font=("Times New Roman", 12), pady=25,command=lambda: move_right(speed_value_entry.get(),steps_value_entry.get()))
-        move_left_button = tkinter.Button(now_logged_in_frame, text = "<--", bg=button_colour, fg="#FFFFFF", font=("Times New Roman", 12), pady=25,command=lambda: move_left(speed_value_entry.get(),steps_value_entry.get()))
+        move_up_button = tkinter.Button(now_logged_in_frame, text = "UP", bg=button_colour, fg="#FFFFFF", font=("Times New Roman", 12), pady=25,command=lambda: self.on_move_up_button(speed_value_entry.get(),steps_value_entry.get()))
+        move_down_button = tkinter.Button(now_logged_in_frame, text = "DOWN", bg=button_colour, fg="#FFFFFF", font=("Times New Roman", 12), pady=25,command=lambda: self.on_move_down_button(speed_value_entry.get(),steps_value_entry.get()))
+        move_right_button = tkinter.Button(now_logged_in_frame, text = "-->", bg=button_colour, fg="#FFFFFF", font=("Times New Roman", 12), pady=25,command=lambda: self.on_move_right_button(speed_value_entry.get(),steps_value_entry.get()))
+        move_left_button = tkinter.Button(now_logged_in_frame, text = "<--", bg=button_colour, fg="#FFFFFF", font=("Times New Roman", 12), pady=25,command=lambda: self.on_move_left_button(speed_value_entry.get(),steps_value_entry.get()))
         speed_value_label = tkinter.Label(now_logged_in_frame, text="Speed:", bg='#161d29', fg="#FFFFFF", font=("Times New Roman", 12), pady=25)
         steps_value_label = tkinter.Label(now_logged_in_frame, text="Steps:", bg='#161d29', fg="#FFFFFF", font=("Times New Roman", 12), pady=25)
 
@@ -493,6 +493,38 @@ class NowLoggedInPage(tkinter.Tk):
         move_left_button.grid(row=3, column=5, columnspan=1)
 
         now_logged_in_frame.pack()
+    
+    def on_move_up_button(self,speed, steps):
+        if int(speed) > 2:
+            messagebox.showerror("Speed too high!","Lower Speed!")
+        elif int(steps) > 50:
+            messagebox.showerror("Steps too high!","Lower Steps!")
+        else:
+            move_up(speed,steps)
+
+    def on_move_right_button(self,speed, steps):
+        if int(speed) > 2:
+            messagebox.showerror("Speed too high!","Lower Speed!")
+        elif int(steps) > 50:
+            messagebox.showerror("Steps too high!","Lower Steps!")
+        else:
+            move_right(speed,steps)
+    
+    def on_move_left_button(self,speed, steps):
+        if int(speed) > 2:
+            messagebox.showerror("Speed too high!","Lower Speed!")
+        elif int(steps) > 50:
+            messagebox.showerror("Steps too high!","Lower Steps!")
+        else:
+            move_left(speed,steps)
+
+    def on_move_down_button(self,speed, steps):
+        if int(speed) > 2:
+            messagebox.showerror("Speed too high!","Lower Speed!")
+        elif int(steps) > 50:
+            messagebox.showerror("Steps too high!","Lower Steps!")
+        else:
+            move_down(speed,steps)
     
     def print_to_text_file(self):
         file_path = "userdata.txt"
