@@ -10,6 +10,7 @@ from display import open_camera_display
 from Movement_Y import move_up, move_down
 from Movement_X import move_left, move_right
 import threading
+from datetime import datetime
 
 # Create a thread for the camera display function
 camera_thread = threading.Thread(target=open_camera_display)
@@ -362,7 +363,7 @@ class NowLoggedInPage(tkinter.Tk):
         self.human_count = 0
         self.master = master
         self.title("Logged in")
-        self.geometry('750x500')
+        self.geometry('900x1000')
         self.configure(bg="#161d29")
         self.pigeon_datetimes = [] # Create empty lists for the datetimes
         self.fox_datetimes = [] 
@@ -372,19 +373,40 @@ class NowLoggedInPage(tkinter.Tk):
         #Create widgets on the now logged in page
         self.create_widgets()
         self.gather_data()
+    
+    def on_add_fox_button(self):
+        conn = sqlite3.connect('Data details.db')
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO users (Userid, DateTime, Type) VALUES (?, ?, ?)", (logged_in_user_id, datetime.now(), "Fox")) # Insert a new record into the users table for the right userid, adding a fox for the right datetime
+        conn.commit()
+        conn.close()
+
+    def on_add_pigeon_button(self):
+        conn = sqlite3.connect('Data details.db')
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO users (Userid, DateTime, Type) VALUES (?, ?, ?)", (logged_in_user_id, datetime.now(), "Pigeon")) # Insert a new record into the users table for the right userid, adding a pigeon for the right datetime
+        conn.commit()
+        conn.close()
+
+    def on_add_human_button(self):
+        conn = sqlite3.connect('Data details.db')
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO users (Userid, DateTime, Type) VALUES (?, ?, ?)", (logged_in_user_id, datetime.now(), "Human")) # Insert a new record into the users table for the right userid, adding a human for the right datetime
+        conn.commit()
+        conn.close()
 
     def gather_data(self):
         conn = sqlite3.connect('Data details.db')
         cursor = conn.cursor()
 
-        # Fetches pigeon data
-        ("SELECT DateTime FROM users WHERE Type = ? AND Userid = ?", ("Pigeon", logged_in_user_id)) #Requires the right userid (so not any user can access your data)
+        # Fetch pigeon data
+        cursor.execute("SELECT Datetime FROM users WHERE Type = ? AND Userid = ?", ("Pigeon", logged_in_user_id)) #Requires the right userid (so not any user can access your data)
         rows = cursor.fetchall()
         # Iterate over fetched rows
         for row in rows:
             Pigeondatetime = row[0]
-            self.pigeon_datetimes.append(Pigeondatetime) # Append fetched datetime to self.pigeon_datetimes list
-            self.pigeon_count += 1 # Increment pigeon count
+            self.pigeon_datetimes.append(Pigeondatetime)  # Append fetched datetime to self.fox_datetimes list
+            self.pigeon_count += 1 # Increment fox count
 
         # Fetch fox data
         cursor.execute("SELECT Datetime FROM users WHERE Type = ? AND Userid = ?", ("Fox", logged_in_user_id)) #Requires the right userid (so not any user can access your data)
@@ -441,9 +463,9 @@ class NowLoggedInPage(tkinter.Tk):
         steps_value_label = tkinter.Label(now_logged_in_frame, text="Steps:", bg='#161d29', fg="#FFFFFF", font=("Times New Roman", 12), pady=25)
 
         #Buttons for adding to counts
-        human_count_button = tkinter.Button(now_logged_in_frame, text = "Human Detected", bg=button_colour, fg="#FFFFFF", font=("Times New Roman", 12), pady=25,)
-        fox_count_button = tkinter.Button(now_logged_in_frame, text = "Fox Detected", bg=button_colour, fg="#FFFFFF", font=("Times New Roman", 12), pady=25,)
-        pigeon_count_button = tkinter.Button(now_logged_in_frame, text = "Pigeon Detected", bg=button_colour, fg="#FFFFFF", font=("Times New Roman", 12), pady=25,)
+        human_count_button = tkinter.Button(now_logged_in_frame, text = "Human Detected", bg=button_colour, fg="#FFFFFF", font=("Times New Roman", 12), pady=25, command=self.on_add_human_button)
+        fox_count_button = tkinter.Button(now_logged_in_frame, text = "Fox Detected", bg=button_colour, fg="#FFFFFF", font=("Times New Roman", 12), pady=25, command=self.on_add_fox_button)
+        pigeon_count_button = tkinter.Button(now_logged_in_frame, text = "Pigeon Detected", bg=button_colour, fg="#FFFFFF", font=("Times New Roman", 12), pady=25, command=self.on_add_pigeon_button)
 
         # Grid layout for widgets
         logged_in_title.grid(row=0, column=0, columnspan=2)

@@ -36,7 +36,9 @@ def hill_cipher_encrypt(message, key):
 
     # Split message into blocks of size equal to the key matrix dimension
     block_size = int(key.shape[0])
-    split = [message_in_nums[i:i + block_size] for i in range(0, len(message_in_nums), block_size)]
+    split = [] #Initialise small an empty  list to store the split blocks
+    for i in range (0, len(message_in_nums), block_size): # Slice the message_in_nums list from index i to i + block_size
+        split.append(message_in_nums[i:i + block_size])
 
     # Encrypt each block
     for p in split:
@@ -73,7 +75,12 @@ def hill_cipher_decrypt(ciphered_text, key_inverse):
 
     # Split ciphered text into blocks of size equal to the inverse key matrix size/shape
     block_size = int(key_inverse.shape[0])
-    split_text = [ciphered_text_in_nums[i:i + block_size] for i in range(0, len(ciphered_text_in_nums), block_size)]
+    split_text = []  # Initialise an empty list to store the split blocks
+
+    # Iterate over the indices of ciphered_text_in_nums
+    for i in range(0, len(ciphered_text_in_nums), block_size):
+        split_block = ciphered_text_in_nums[i:i + block_size]
+        split_text.append(split_block)
 
     # Decrypt each block
     for t in split_text:
@@ -122,3 +129,4 @@ def decrypt(encrypted_text):
     keyinv = matrix_modulus_inverse(np.array([[3, 2], [5, 7]]))  # Calculate the inverse key matrix
     hill = hill_cipher_decrypt(encrypted_text, keyinv)  #Decrypt the text using Hill cipher
     return backwards_caeser_decrypt(hill, constant_shift)  # Decrypt the Hill cipher output using backwards Caesar cipher
+
