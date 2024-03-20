@@ -75,7 +75,7 @@ class LoginPage(tkinter.Tk):
         conn = sqlite3.connect('Login details.db')
         cursor = conn.cursor()
         #Retrieve user credentials from the database
-        cursor.execute('SELECT id, username, password FROM users WHERE username=?', (username,)) #Looking for the userID now
+        cursor.execute('SELECT id, username, password FROM users WHERE username=?', (encrypt(username),)) #Looking for the userID now
         user_credentials = cursor.fetchone()
 
         # Check if the entered credentials match the database and captcha is correct
@@ -239,7 +239,7 @@ class CreateLoginPage(tkinter.Tk):
         elif len(username) < 5:
             messagebox.showerror("Username must be at least 5 characters or longer", "Invalid username")
         else:
-            cursor.execute('INSERT INTO users(username, password) VALUES (?,?)', (username, encrypt(password)))
+            cursor.execute('INSERT INTO users(username, password) VALUES (?,?)', (encrypt(username), encrypt(password)))
             conn.commit()
             conn.close()
             messagebox.showinfo("Account Created", "Account created successfully!")
@@ -295,7 +295,7 @@ class ChangePasswordPage(tkinter.Tk):
         cursor = conn.cursor()
 
         #Check if old username and password match
-        cursor.execute('SELECT username, password FROM users WHERE username=? AND password=?', (username, encrypt(old_password)))
+        cursor.execute('SELECT username, password FROM users WHERE username=? AND password=?', (encrypt(username), encrypt(old_password)))
         user_credentials = cursor.fetchone()
 
         #Confirm password change
@@ -309,7 +309,7 @@ class ChangePasswordPage(tkinter.Tk):
                     messagebox.showerror("Invalid password", "Password must be at least 8 characters or longer")
                 else:
                     #Update password in the database
-                    cursor.execute('UPDATE users SET password=? WHERE username=?', (encrypt(new_password), username))
+                    cursor.execute('UPDATE users SET password=? WHERE username=?', (encrypt(new_password), encrypt(username)))
                     conn.commit()
                     conn.close()
                     messagebox.showinfo("Password Changed", "Password has been changed successfully!")
@@ -587,7 +587,7 @@ class NowLoggedInPage(tkinter.Tk):
             conn = sqlite3.connect("Login details.db")
             cursor = conn.cursor()
             # Remove user account from the database
-            cursor.execute("DELETE FROM users WHERE username = ? AND password = ?", (self.master.username_entry.get(), encrypt(self.master.password_entry.get())))
+            cursor.execute("DELETE FROM users WHERE username = ? AND password = ?", (encrypt(self.master.username_entry.get()), encrypt(self.master.password_entry.get())))
             conn.commit()
             conn.close()
             self.destroy()
