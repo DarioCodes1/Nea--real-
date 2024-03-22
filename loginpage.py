@@ -226,12 +226,12 @@ class CreateLoginPage(tkinter.Tk):
         cursor = conn.cursor()
 
         #Check if username already exists
-        cursor.execute('SELECT username, password FROM users WHERE username=?', (username,))
+        cursor.execute('SELECT username, password FROM users WHERE username=?', (encrypt(username),))
         existing_username = cursor.fetchone()
 
         #Validation for the username and password
         if existing_username:
-            messagebox.showerror("The entered username already exists. Please choose a different username.", "Username already exists")
+            messagebox.showerror("Username already exists", "The entered username already exists. Please choose a different username.")
         elif total_upper == 0:
             messagebox.showerror("Password must contain at least 1 upper case letter", "Invalid password")
         elif len(password) < 8:
