@@ -494,33 +494,33 @@ class NowLoggedInPage(tkinter.Tk):
         now_logged_in_frame.pack()
     
     def on_move_up_button(self,speed, steps):
-        if int(speed) > 2:
+        if int(speed) > 5:
             messagebox.showerror("Speed too high!","Lower Speed!")
-        elif int(steps) > 50:
+        elif int(steps) > 64:
             messagebox.showerror("Steps too high!","Lower Steps!")
         else:
             move_up(speed,steps)
 
     def on_move_right_button(self,speed, steps):
-        if int(speed) > 2:
+        if int(speed) > 5:
             messagebox.showerror("Speed too high!","Lower Speed!")
-        elif int(steps) > 50:
+        elif int(steps) > 64:
             messagebox.showerror("Steps too high!","Lower Steps!")
         else:
             move_right(speed,steps)
     
     def on_move_left_button(self,speed, steps):
-        if int(speed) > 2:
+        if int(speed) > 5:
             messagebox.showerror("Speed too high!","Lower Speed!")
-        elif int(steps) > 50:
+        elif int(steps) > 64:
             messagebox.showerror("Steps too high!","Lower Steps!")
         else:
             move_left(speed,steps)
 
     def on_move_down_button(self,speed, steps):
-        if int(speed) > 2:
+        if int(speed) > 5:
             messagebox.showerror("Speed too high!","Lower Speed!")
-        elif int(steps) > 50:
+        elif int(steps) > 64:
             messagebox.showerror("Steps too high!","Lower Steps!")
         else:
             move_down(speed,steps)

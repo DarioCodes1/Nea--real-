@@ -1,8 +1,8 @@
 import time
-#from Adafruit_MotorHAT import Adafruit_MotorHAT, Adafruit_StepperMotor
+from Adafruit_MotorHAT import Adafruit_MotorHAT, Adafruit_StepperMotor
 
 # Create a default object for the motor hat.
-#mh = Adafruit_MotorHAT(i2c_bus=1)  # Specify I2C bus 1
+mh = Adafruit_MotorHAT(i2c_bus=1)  # Specify I2C bus 1
 
 def move_up(speed, steps):
     speed = float(speed)
